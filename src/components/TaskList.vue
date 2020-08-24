@@ -14,13 +14,20 @@
       <span>What I need to do?</span>
     </label>
     <ul class="tasks">
-      <li class="task" v-for="(task, index) in tasks" :key="task">
-        {{ task }}
+      <li
+        class="task"
+        v-for="(task, index) in tasks"
+        :key="task"
+        v-bind:class="{completed: task.isComplete}"
+      >
+        <input type="checkbox" v-on:change="completeTask(task)" v-bind:checked="task.isComplete" />
+        {{ task.title }}
         <span @click="deleteTask(index)">
           <font-awesome-icon icon="times" />
         </span>
       </li>
     </ul>
+    <button v-if="!isHidden" class="clearAll" @click="clearAllTasks">Clear list</button>
   </div>
 </template>
 
@@ -29,7 +36,11 @@ export default {
   data() {
     return {
       newTask: "",
-      tasks: ["Read a book", "Go to the shopping"],
+      tasks: [
+        { title: "Read a book", isComplete: false },
+        { title: "Go to the shopping", isComplete: false },
+      ],
+      isHidden: false,
     };
   },
   methods: {
@@ -37,22 +48,26 @@ export default {
       if (this.newTask == "") {
         alert("Please enter a new task!");
       } else {
-        this.tasks.push(this.newTask);
+        this.tasks.push({ title: this.newTask, isComplete: false });
         this.newTask = "";
+        this.isHidden = false;
       }
     },
     deleteTask(index) {
       this.tasks.splice(index, 1);
+    },
+    clearAllTasks() {
+      this.tasks = [];
+      this.isHidden = true;
+    },
+    completeTask: function (task) {
+      task.isComplete = !task.isComplete;
     },
   },
 };
 </script>
 
 <style>
-* {
-  box-sizing: border-box;
-}
-
 .list {
   display: flex;
   flex-direction: column;
@@ -66,6 +81,7 @@ export default {
   color: rgb(97, 95, 95);
   margin: 30px 0;
   text-shadow: 2px 2px 8px #bdb8b8;
+  text-align: center;
 }
 
 input {
@@ -144,11 +160,21 @@ input.question + label > span {
 .tasks li {
   border: 2px solid rgb(212, 209, 209);
   margin-bottom: 20px;
-  text-indent: 10px;
   padding: 20px 0;
   box-shadow: 10px 10px rgb(218, 214, 214);
   border-radius: 5px;
   color: rgb(97, 95, 95);
+}
+
+.tasks input {
+  float: left;
+  height: 25px;
+  width: 35px;
+  cursor: pointer;
+}
+
+.completed{
+  text-decoration: line-through;
 }
 
 .tasks span {
@@ -157,5 +183,32 @@ input.question + label > span {
   float: right;
   margin-right: 15px;
   color: rgb(97, 95, 95);
+}
+
+.clearAll {
+  cursor: pointer;
+  width: 20%;
+  padding: 20px;
+  background-color: rgb(97, 95, 95);
+  font-size: 15px;
+  font-weight: bold;
+  color: #fff;
+  border-radius: 5px;
+  border: none;
+  text-transform: uppercase;
+  display: inline-block;
+  transition: all 0.3s ease 0s;
+}
+
+.clearAll:hover {
+  color: rgb(97, 95, 95);
+  letter-spacing: 3px;
+  background: none;
+  box-shadow: 0px 5px 40px -10px rgba(0, 0, 0, 0.57);
+  transition: all 0.3s ease 0s;
+}
+
+.clearAll:focus {
+  outline: 0;
 }
 </style>
