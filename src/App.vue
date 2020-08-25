@@ -38,7 +38,7 @@ body {
 
 footer {
   position: absolute;
-  bottom: 0;
+  bottom: 5px;
   height: 2.5rem;
   width: 100%;
   text-align: center;

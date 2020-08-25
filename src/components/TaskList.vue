@@ -17,7 +17,7 @@
       <li
         class="task"
         v-for="(task, index) in tasks"
-        :key="task"
+        :key="task.id"
         v-bind:class="{completed: task.isComplete}"
       >
         <input type="checkbox" v-on:change="completeTask(task)" v-bind:checked="task.isComplete" />
@@ -60,9 +60,26 @@ export default {
       this.tasks = [];
       this.isHidden = true;
     },
-    completeTask: function (task) {
+    completeTask(task) {
       task.isComplete = !task.isComplete;
     },
+  },
+  watch: {
+    tasks: {
+      handler() {
+        console.log("Tasks changed!");
+        localStorage.setItem("tasks", JSON.stringify(this.tasks));
+      },
+    },
+  },
+  mounted() {
+    console.log("App mounted!");
+    if (localStorage.getItem("tasks")) {
+      this.tasks = JSON.parse(localStorage.getItem("tasks"));
+    }
+    if (this.tasks.length < 0) {
+          this.isHidden = true;
+        }
   },
 };
 </script>
@@ -152,7 +169,7 @@ input.question + label > span {
 .tasks {
   width: 60%;
   list-style: none;
-  font-size: 25px;
+  font-size: 20px;
   padding: 0;
   padding-top: 20px;
 }
@@ -173,7 +190,7 @@ input.question + label > span {
   cursor: pointer;
 }
 
-.completed{
+.completed {
   text-decoration: line-through;
 }
 
@@ -183,6 +200,11 @@ input.question + label > span {
   float: right;
   margin-right: 15px;
   color: rgb(97, 95, 95);
+  transition: transform 0.2s;
+}
+
+.tasks span:hover {
+  transform: scale(1.5);
 }
 
 .clearAll {
@@ -210,5 +232,9 @@ input.question + label > span {
 
 .clearAll:focus {
   outline: 0;
+}
+
+[v-cloak] {
+  display: none;
 }
 </style>
